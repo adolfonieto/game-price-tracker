@@ -71,14 +71,8 @@ def get_prices(game: str):
         pass
 
     if not results:
-        return {
-            "game": game,
-            "min_price": 999,
-            "results": [
-                {"store": "fallback", "title": game, "price": 999}
-            ]
-        }
-
+    return {"error": "No results"}
+    
     min_price = min(r["price"] for r in results)
 
     return {
