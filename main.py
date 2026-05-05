@@ -14,17 +14,17 @@ EMAIL_PASS = os.getenv("EMAIL_PASS")
 # ---------- SCRAPERS ----------
 
 def search_idealo(game):
-    url = f"https://www.idealo.es/precios/MainSearchProductCategory.html?q={game}"
+    url = f"https://www.idealo.es/precios/MainSearchProductCategory.html?q={game.replace(' ', '+')}"
     headers = {"User-Agent": "Mozilla/5.0"}
     r = requests.get(url, headers=headers)
 
     results = []
 
-    # Búsqueda simple por precios en texto
-    matches = re.findall(r"\d{1,4},\d{2}\s?€", r.text)
+    # buscar precios tipo "59,99 €"
+    matches = re.findall(r'(\d{1,4},\d{2})\s?€', r.text)
 
-    for m in matches[:5]:  # cogemos los primeros 5 precios
-        price = float(m.replace("€", "").replace(",", ".").strip())
+    for m in matches[:10]:
+        price = float(m.replace(",", "."))
         results.append({
             "store": "Idealo",
             "title": game,
