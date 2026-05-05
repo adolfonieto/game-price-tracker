@@ -71,7 +71,7 @@ def get_prices(game: str):
         pass
 
     if not results:
-    return {"error": "No results"}
+        return {"error": "No results"}
     
     min_price = min(r["price"] for r in results)
 
