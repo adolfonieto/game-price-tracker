@@ -11,8 +11,6 @@ app = FastAPI()
 
 # ---------- SCRAPERS ----------
 
-USD_TO_EUR = 0.93
-price = float(m) * USD_TO_EUR
 
 def search_idealo(game):
     url = f"https://www.idealo.es/precios/MainSearchProductCategory.html?q={game.replace(' ', '+')}"
