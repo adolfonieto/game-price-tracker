@@ -17,22 +17,19 @@ def search_idealo(game):
     url = f"https://www.idealo.es/precios/MainSearchProductCategory.html?q={game}"
     headers = {"User-Agent": "Mozilla/5.0"}
     r = requests.get(url, headers=headers)
-    soup = BeautifulSoup(r.text, "lxml")
 
     results = []
 
-    for item in soup.select(".offerList-item"):
-        title = item.select_one(".offerList-item-title")
-        price = item.select_one(".offerList-item-price")
+    # Búsqueda simple por precios en texto
+    matches = re.findall(r"\d{1,4},\d{2}\s?€", r.text)
 
-        if title and price:
-            price_value = re.findall(r"\d+,\d+", price.text)
-            if price_value:
-                results.append({
-                    "store": "Idealo",
-                    "title": title.text.strip(),
-                    "price": float(price_value[0].replace(",", "."))
-                })
+    for m in matches[:5]:  # cogemos los primeros 5 precios
+        price = float(m.replace("€", "").replace(",", ".").strip())
+        results.append({
+            "store": "Idealo",
+            "title": game,
+            "price": price
+        })
 
     return results
 
