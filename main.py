@@ -7,11 +7,12 @@ import os
 
 app = FastAPI()
 
-EMAIL_FROM = os.getenv("EMAIL_FROM")
-EMAIL_TO = os.getenv("EMAIL_TO")
-EMAIL_PASS = os.getenv("EMAIL_PASS")
+
 
 # ---------- SCRAPERS ----------
+
+USD_TO_EUR = 0.93
+price = float(m) * USD_TO_EUR
 
 def search_idealo(game):
     url = f"https://www.idealo.es/precios/MainSearchProductCategory.html?q={game.replace(' ', '+')}"
@@ -35,22 +36,21 @@ def search_idealo(game):
 
 
 def search_dekudeals(game):
-    url = f"https://www.dekudeals.com/search?q={game}"
+    url = f"https://www.dekudeals.com/search?q={game.replace(' ', '+')}"
     headers = {"User-Agent": "Mozilla/5.0"}
     r = requests.get(url, headers=headers)
-    soup = BeautifulSoup(r.text, "lxml")
 
     results = []
 
-    price = soup.select_one(".price")
-    if price:
-        value = re.findall(r"\d+\.\d+", price.text)
-        if value:
-            results.append({
-                "store": "DekuDeals",
-                "title": game,
-                "price": float(value[0])
-            })
+    matches = re.findall(r'\$(\d+\.\d{2})', r.text)
+
+    for m in matches[:5]:
+        price = float(m)
+        results.append({
+            "store": "DekuDeals",
+            "title": game,
+            "price": price
+        })
 
     return results
 
